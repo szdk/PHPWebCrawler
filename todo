@@ -1,0 +1,4 @@
+crawl multiple URL
+remove dot segments
+sort query parameters
+capitalize urlencoded data
