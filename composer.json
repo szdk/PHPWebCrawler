@@ -1,5 +1,5 @@
 {
-    "name" : "szdk/PHPWebCrawler",
+    "name" : "szdk/phpwebcrawler",
     "description": "Browse/Download all pages from websites",
     "keywords" : [ "web", "pages", "crawler", "extractor"],
     "autoload": {
