@@ -18,19 +18,6 @@ trait Queue
         return $this->queued;
     }
 
-    /*
-    private function markProcessed(String $url)
-    {
-        $this->processed($url);
-        $this->queued = $this->queued();
-        if (isset($this->queued[$url])) {
-            unset($this->queued[$url]);
-            \file_put_contents($this->files['queued'], \json_encode($this->queued));
-            return true;
-        }
-        return false;
-    }*/
-
     private function processed(String $url = null) : array
     {
         if (empty($this->processed) && \is_readable($this->files['processed'])) {

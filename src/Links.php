@@ -95,44 +95,6 @@ trait Links
             }
             $matches[$index] = $this->addPath($contentUrl, $link);
         }
-
-
-        /*
-        if (!$this->localFile) {
-            $parts = parse_url($contentUrl);
-            $scheme = $parts['scheme'] ?? null;
-            $host = !empty($this->rootDir) ? $this->rootDir : $parts['host'] ?? '';
-            $path = $parts['path'] ?? '';
-            if (empty($host)) {
-                return [];
-            }
-        }
-
-
-        foreach ($matches as $index => $link) {
-            if (stripos($link, 'javascript:') ===0) {
-                unset($matches[$index]);
-                continue;
-            }
-            if (stripos($link, 'http://') ===0 || stripos($link, 'https://') ===0) {
-                continue;
-            }
-            $matches[$index] = '';
-            if (!empty($scheme)) {
-                $matches[$index] = $scheme . "://";
-            }
-            if (stripos($link, '/') ===0) {
-                $matches[$index] .= $host . $link;
-            } else {
-                $matches[$index] .= $host . $path;
-                if (strrpos($matches[$index], '/') !== strlen($matches[$index]) - 1) {
-                    $matches[$index] .= '/';
-                }
-                $matches[$index] .= $link;
-            }
-        }
-        */
-
         return $matches;
     }
 }
