@@ -28,4 +28,4 @@ $scraper = function ($content) {
 $crawler = new szdk\PHPWebCrawler\Crawler($url, true);
 //$crawler->rootDir = 'php-docs';
 $crawler->depth = 0;
-$crawler->run($func);
+$crawler->run($scraper);
