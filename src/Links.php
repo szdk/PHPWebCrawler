@@ -47,7 +47,7 @@ trait Links
         $parent = $this->getTrimmedURL($parent, self::REMOVE_FILE_NAME | self::REMOVE_ANCHOR | self::REMOVE_SCHEME);
         $url = $this->getTrimmedURL($url, self::REMOVE_SCHEME);
 
-        if (\strpos($url, $parent) ===0) {
+        if (\strpos($parent, $url) ===0) {
             return true;
         }
         return false;
