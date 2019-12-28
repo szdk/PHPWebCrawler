@@ -1,7 +1,7 @@
 {
     "name" : "szdk/PHPWebCrawler",
     "description": "Browse/Download all pages from websites",
-    "keywords" : [ "web", "pages", "extractor" ],
+    "keywords" : [ "web", "pages", "crawler", "extractor"],
     "autoload": {
         "psr-4" : {
             "szdk\\PHPWebCrawler\\" : "src/"
