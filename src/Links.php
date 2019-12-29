@@ -5,7 +5,7 @@ namespace szdk\PHPWebCrawler;
 trait Links
 {
 
-    public function getTrimmedURL(String $url, int $flags = self::REMOVE_ANCHOR) : string
+    public static function getTrimmedURL(String $url, int $flags = self::REMOVE_ANCHOR) : string
     {
         $url = \trim($url);
         if ($flags & self::REMOVE_ANCHOR) {
@@ -27,25 +27,22 @@ trait Links
     }
 
     //returns true if url1 & url2 match, false instead
-    public function compareURL(String $url1, String $url2, $caseInsensitive = false) : bool
+    public static function compareURL(String $url1, String $url2, $caseInsensitive = false) : bool
     {
         $flags = self::REMOVE_ANCHOR | self::REMOVE_SCHEME;
         if ($caseInsensitive) {
             $flags |= self::LOWERCASE;
         }
-        if ($this->getTrimmedURL($url1, $flags) == $this->getTrimmedURL($url2, $flags)) {
+        if (self::getTrimmedURL($url1, $flags) == self::getTrimmedURL($url2, $flags)) {
             return true;
         }
         return false;
     }
 
-    public function isChildrenURL(String $url, String $parent = null) : bool
+    public static function isChildrenURL(String $url, String $parent) : bool
     {
-        if (empty($parent)) {
-            $parent = $this->url;
-        }
-        $parent = $this->getTrimmedURL($parent, self::REMOVE_FILE_NAME | self::REMOVE_ANCHOR | self::REMOVE_SCHEME);
-        $url = $this->getTrimmedURL($url, self::REMOVE_SCHEME);
+        $parent = self::getTrimmedURL($parent, self::REMOVE_FILE_NAME | self::REMOVE_ANCHOR | self::REMOVE_SCHEME);
+        $url = self::getTrimmedURL($url, self::REMOVE_SCHEME);
 
         if (\strpos($url, $parent) ===0) {
             return true;
@@ -53,37 +50,36 @@ trait Links
         return false;
     }
 
-    public function HTMLGetBaseUrl(String &$content, String $contentUrl)
+    public static function HTMLGetBaseUrl(String &$content, String $contentUrl)
     {
-        ///$contentUrl = $this->getTrimmedURL($contentUrl);
         \preg_match('/\<\s*base\s*[^>]+?href\s*=\s*[\"\']([^\"\']+?)[\"\'][^>]*>.+<\/head>/is', $content, $match);
         if (!empty($match[1])) {
-            return $this->addPath($contentUrl, $this->getTrimmedURL($match[1], self::REMOVE_FILE_NAME));
+            return self::addPath($contentUrl, self::getTrimmedURL($match[1], self::REMOVE_FILE_NAME));
         }
-        return $this->getTrimmedURL($contentUrl);
+        return self::getTrimmedURL($contentUrl);
     }
 
-    public function addPath(String $url, String $path) : String
+    public static function addPath(String $url, String $path) : String
     {
         $path = \trim($path);
-        $url = $this->getTrimmedUrl($url, self::REMOVE_FILE_NAME);
+        $url = self::getTrimmedUrl($url, self::REMOVE_FILE_NAME);
         if (\preg_match('/^(https?:\/\/|[a-z][a-z]?:\/)/i', $path)) {
             return $path;
         } elseif (\stripos($path, '/') ===0) {
-            return $this->getRootDir($url) . $path;
+            return self::getRootDir($url) . $path;
         } else {
             return $url . $path;
         }
     }
 
-    public function getRootDir(String $path)
+    public static function getRootDir(String $path)
     {
         return \preg_replace("~^(https?://[^/\#\?]+|[a-z][a-z]?:(?=/)).*$~i", '$1', $path);
     }
 
-    public function extractLinks(String &$content, String $contentUrl) : array
+    public static function extractLinks(String &$content, String $contentUrl) : array
     {
-        $contentUrl = $this->HTMLGetBaseUrl($content, $contentUrl);
+        $contentUrl = self::HTMLGetBaseUrl($content, $contentUrl);
         \preg_match_all('/\<\s*a[^\>]+href\s*\=\s*\"([^\"]+)/is', $content, $matches1);
         \preg_match_all('/\<\s*a[^\>]+href\s*\=\s*\'([^\']+)/is', $content, $matches2);
         $matches = array_merge($matches1[1], $matches2[1]);
@@ -93,7 +89,7 @@ trait Links
                 unset($matches[$index]);
                 continue;
             }
-            $matches[$index] = $this->addPath($contentUrl, $link);
+            $matches[$index] = self::addPath($contentUrl, $link);
         }
         return $matches;
     }

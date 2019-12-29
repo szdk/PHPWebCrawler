@@ -33,10 +33,10 @@ class Crawler
 
     public function __construct(String $url, $clearURLs = false)
     {
-        $this->url = trim($url);
-        if (stripos($this->url, 'http://') !== 0 && stripos($this->url, 'https://') !== 0) {
+        $this->url = \trim($url);
+        if (\stripos($this->url, 'http://') !== 0 && \stripos($this->url, 'https://') !== 0) {
             $this->localFile = true;
-            $this->url = str_replace('\\', '/', realpath($this->url));
+            $this->url = \str_replace('\\', '/', \realpath($this->url));
         }
         foreach ($this->dirs as $dir) {
             if (!\is_dir($dir)) {
@@ -58,7 +58,7 @@ class Crawler
         
 
         while (!empty($this->queued) && ($this->depth === 0 || $this->processedCount < $this->depth)) {
-            $url = array_key_first($this->queued);
+            $url = \array_key_first($this->queued);
 
             if ($this->isURLProcessed($url)) {
                 $this->processed($url);
@@ -68,7 +68,7 @@ class Crawler
             $this->processed($url);
 
 
-            if ($this->onlyChildren && !$this->isChildrenURL($url)) {
+            if ($this->onlyChildren && !$this->isChildrenURL($url, $this->url)) {
                 continue;
             }
             
@@ -88,7 +88,7 @@ class Crawler
 
             $newLinks = $this->extractLinks($content, $url);
             foreach ($newLinks as $link) {
-                if (!$this->isURLProcessed($link) && (!$this->onlyChildren || $this->isChildrenURL($link))) {
+                if (!$this->isURLProcessed($link) && (!$this->onlyChildren || $this->isChildrenURL($link, $this->url))) {
                     $this->queued(!$this->localFile ? $link : $this->getTrimmedURL($link, self::REMOVE_ANCHOR | self::REMOVE_QUERY));
                 }
             }
