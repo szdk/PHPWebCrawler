@@ -5,7 +5,7 @@ namespace szdk\PHPWebCrawler;
 trait Links
 {
 
-    private function getTrimmedURL(String $url, int $flags = self::REMOVE_ANCHOR) : string
+    public function getTrimmedURL(String $url, int $flags = self::REMOVE_ANCHOR) : string
     {
         $url = \trim($url);
         if ($flags & self::REMOVE_ANCHOR) {
@@ -27,7 +27,7 @@ trait Links
     }
 
     //returns true if url1 & url2 match, false instead
-    private function compareURL(String $url1, String $url2, $caseInsensitive = false) : bool
+    public function compareURL(String $url1, String $url2, $caseInsensitive = false) : bool
     {
         $flags = self::REMOVE_ANCHOR | self::REMOVE_SCHEME;
         if ($caseInsensitive) {
@@ -39,7 +39,7 @@ trait Links
         return false;
     }
 
-    private function isChildrenURL(String $url, String $parent = null) : bool
+    public function isChildrenURL(String $url, String $parent = null) : bool
     {
         if (empty($parent)) {
             $parent = $this->url;
@@ -47,13 +47,13 @@ trait Links
         $parent = $this->getTrimmedURL($parent, self::REMOVE_FILE_NAME | self::REMOVE_ANCHOR | self::REMOVE_SCHEME);
         $url = $this->getTrimmedURL($url, self::REMOVE_SCHEME);
 
-        if (\strpos($parent, $url) ===0) {
+        if (\strpos($url, $parent) ===0) {
             return true;
         }
         return false;
     }
 
-    private function HTMLGetBaseUrl(String &$content, String $contentUrl)
+    public function HTMLGetBaseUrl(String &$content, String $contentUrl)
     {
         ///$contentUrl = $this->getTrimmedURL($contentUrl);
         \preg_match('/\<\s*base\s*[^>]+?href\s*=\s*[\"\']([^\"\']+?)[\"\'][^>]*>.+<\/head>/is', $content, $match);
@@ -63,7 +63,7 @@ trait Links
         return $this->getTrimmedURL($contentUrl);
     }
 
-    private function addPath(String $url, String $path) : String
+    public function addPath(String $url, String $path) : String
     {
         $path = \trim($path);
         $url = $this->getTrimmedUrl($url, self::REMOVE_FILE_NAME);
@@ -76,12 +76,12 @@ trait Links
         }
     }
 
-    private function getRootDir(String $path)
+    public function getRootDir(String $path)
     {
         return \preg_replace("~^(https?://[^/\#\?]+|[a-z][a-z]?:(?=/)).*$~i", '$1', $path);
     }
 
-    private function extractLinks(String &$content, String $contentUrl) : array
+    public function extractLinks(String &$content, String $contentUrl) : array
     {
         $contentUrl = $this->HTMLGetBaseUrl($content, $contentUrl);
         \preg_match_all('/\<\s*a[^\>]+href\s*\=\s*\"([^\"]+)/is', $content, $matches1);
