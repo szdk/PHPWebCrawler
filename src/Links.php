@@ -44,7 +44,7 @@ trait Links
         $parent = self::getTrimmedURL($parent, self::REMOVE_FILE_NAME | self::REMOVE_ANCHOR | self::REMOVE_SCHEME);
         $url = self::getTrimmedURL($url, self::REMOVE_SCHEME);
 
-        if (\strpos($url, $parent) ===0) {
+        if (\strpos($url . '/', $parent) ===0) {
             return true;
         }
         return false;
@@ -59,22 +59,27 @@ trait Links
         return self::getTrimmedURL($contentUrl);
     }
 
-    public static function addPath(String $url, String $path) : String
+    public static function addPath(String $inUrl, String $addThisPath) : String
     {
-        $path = \trim($path);
-        $url = self::getTrimmedUrl($url, self::REMOVE_FILE_NAME);
-        if (\preg_match('/^(https?:\/\/|[a-z][a-z]?:\/)/i', $path)) {
-            return $path;
-        } elseif (\stripos($path, '/') ===0) {
-            return self::getRootDir($url) . $path;
+        $addThisPath = \trim($addThisPath);
+        if (stripos($addThisPath, '#') !== 0 && stripos($addThisPath, '?') !== 0) {
+            $inUrl = self::getTrimmedUrl($inUrl, self::REMOVE_FILE_NAME);
+        }else {
+            $inUrl = self::getTrimmedURL($inUrl, self::REMOVE_ANCHOR | self::REMOVE_QUERY);
+        }
+        if (\preg_match('/^(https?:\/\/|[a-z][a-z]?:\/)/i', $addThisPath)) {
+            return $addThisPath;
+        } elseif (\stripos($addThisPath, '/') ===0) {
+            return self::getRootDir($inUrl) . $addThisPath;
         } else {
-            return $url . $path;
+            return $inUrl . $addThisPath;
         }
     }
 
     public static function getRootDir(String $path)
     {
-        return \preg_replace("~^(https?://[^/\#\?]+|[a-z][a-z]?:(?=/)).*$~i", '$1', $path);
+        $path = trim($path);
+        return \preg_replace("~^(https?://[^/\#\?]+|[a-z][a-z]?:(?=/))?.*$~i", '$1', $path);
     }
 
     public static function extractLinks(String &$content, String $contentUrl) : array
@@ -85,7 +90,10 @@ trait Links
         $matches = array_merge($matches1[1], $matches2[1]);
 
         foreach ($matches as $index => $link) {
-            if (\preg_match('/[a-z]+\:/i', $link)) {
+            if (
+                !\preg_match('/^(https?:\/\/|[a-z][a-z]?:\/)/i', $link) &&
+                \preg_match('/^[a-z]{3,}\:/i', $link)
+            ) {
                 unset($matches[$index]);
                 continue;
             }
