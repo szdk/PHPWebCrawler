@@ -45,6 +45,13 @@ class Crawler
         }
         if ($clearURLs) {
             $this->clearURLs();
+        } else {
+            $this->processed();
+            $url = array_pop($this->processed);
+            if ($url) {
+                !$this->localFile && $url .= "http://";
+                $this->queued($url);
+            }
         }
     }
 
